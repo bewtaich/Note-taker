@@ -9,10 +9,16 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.get("/api/notes", (req, res) => {
-  const notes = require("./db/db.json");
-  res.json(notes);
+app.get('/api/notes', (req, res) => {
+  fs.readFile(path.join(__dirname, 'db', 'db.json'), 'utf-8', (err, data) => {
+    if (err) {
+      console.error(err);
+    }
+    const notes = JSON.parse(data);
+    res.json(notes);
+  });
 });
+
 
 app.get("/notes", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "notes.html"));
@@ -39,8 +45,10 @@ app.post("/api/notes", (req, res) => {
           if (err) {
             console.error(err);
             return;
+          } else {
+            console.log("Note Successfully Posted");
+            res.json(newNote);
           }
-          res.json(newNote);
         }
       );
     }
@@ -60,10 +68,11 @@ app.delete("/api/notes/:id", (req, res) => {
         return;
       }
 
-    let notes = JSON.parse(jsonData);
-    notes = notes.filter(note => note.id === noteId) 
+      let notes = JSON.parse(jsonData);
 
-    fs.writeFile(
+      notes = notes.filter((note) => note.id !== noteId);
+
+      fs.writeFile(
         path.join(__dirname, "db", "db.json"),
         JSON.stringify(notes),
         (err) => {
@@ -75,8 +84,6 @@ app.delete("/api/notes/:id", (req, res) => {
         }
       );
     }
-
-    
   );
 });
 
