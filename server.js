@@ -9,8 +9,8 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.get('/api/notes', (req, res) => {
-  fs.readFile(path.join(__dirname, 'db', 'db.json'), 'utf-8', (err, data) => {
+app.get("/api/notes", (req, res) => {
+  fs.readFile(path.join(__dirname, "db", "db.json"), "utf-8", (err, data) => {
     if (err) {
       console.error(err);
     }
@@ -18,7 +18,6 @@ app.get('/api/notes', (req, res) => {
     res.json(notes);
   });
 });
-
 
 app.get("/notes", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "notes.html"));
